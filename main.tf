@@ -15,6 +15,15 @@ resource "azurerm_storage_account" "example" {
   }
 }
 
+
+resource "azurerm_storage_container" "storage_container" {
+  name                  = var.storage_container
+  storage_account_name  = azurerm_storage_account.resource_group.name
+  container_access_type = "public"
+}
+
+
+
 resource "azurerm_search_service" "search_service" {
   name                = var.search_service
   resource_group_name = azurerm_resource_group.resource_group.name

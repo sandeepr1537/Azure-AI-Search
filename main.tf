@@ -9,12 +9,14 @@ resource "azurerm_storage_account" "example" {
   location                  = azurerm_resource_group.resource_group.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
-  
+  allow_blob_public_access  = true # This allows anonymous access on individual containers
 
   tags = {
     environment = "staging"
   }
 }
+
+
 
 resource "azurerm_search_service" "search_service" {
   name                = var.search_service

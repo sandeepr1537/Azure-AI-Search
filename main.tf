@@ -9,23 +9,18 @@ resource "azurerm_storage_account" "example" {
   location                  = azurerm_resource_group.resource_group.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
+  allow_blob_public_access  = true # This allows anonymous access on individual containers
 
   tags = {
     environment = "staging"
   }
 }
 
-resource "azurerm_storage_container" "storage_container" {
-  name                  = var.storage_container
-  storage_account_name  = azurerm_storage_account.example.name
-  container_access_type = "public"
-}
-
 resource "azurerm_search_service" "search_service" {
   name                = var.search_service
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
-  sku                 = "Basic"
+  sku                 = "basic"
 }
 
 resource "azurerm_cognitive_account" "cognitive_account" {

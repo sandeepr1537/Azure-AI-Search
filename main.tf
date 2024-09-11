@@ -15,14 +15,11 @@ resource "azurerm_storage_account" "example" {
   }
 }
 
-
 resource "azurerm_storage_container" "storage_container" {
   name                  = var.storage_container
-  storage_account_name  = azurerm_storage_account.resource_group.name
+  storage_account_name  = azurerm_storage_account.example.name
   container_access_type = "public"
 }
-
-
 
 resource "azurerm_search_service" "search_service" {
   name                = var.search_service
@@ -31,10 +28,8 @@ resource "azurerm_search_service" "search_service" {
   sku                 = "Basic"
 }
 
-
-
 resource "azurerm_cognitive_account" "cognitive_account" {
-  name                = var.Cognitive_Service
+  name                = var.cognitive_account
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
   sku_name            = var.sku

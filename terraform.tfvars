@@ -4,4 +4,4 @@ storage_account      = "mystorageaccount"
 search_service       = "mysearchservice"
 sku                  = "S0"
 cognitive_account    = "mycognitiveaccount"
-storage_container    = "mystoragecontainer"
+

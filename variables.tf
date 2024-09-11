@@ -32,3 +32,24 @@ variable "sku" {
   description = "The SKU name of the Azure Cognitive Services account"
   type        = string
 }
+
+variable "client_id" {
+  description = "The client ID for Azure authentication"
+  type        = string
+}
+
+variable "client_secret" {
+  description = "The client secret for Azure authentication"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "The tenant ID for Azure authentication"
+  type        = string
+}
+
+variable "subscription_id" {
+  description = "The subscription ID for Azure authentication"
+  type        = string
+}
+

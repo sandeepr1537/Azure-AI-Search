@@ -5,3 +5,8 @@ search_service       = "mysearchservice"
 sku                  = "S0"
 cognitive_account    = "mycognitiveaccount"
 storage_container    = "mystoragecontainer"
+client_id       = "a9b38e26-f079-4377-a2cf-28975fda67c8"
+client_secret   = "yH_8Q~Mf-T4.S5pucndVS~DYtf5aOQtgkhgCTbSo"
+tenant_id       = "15f3c739-5bdb-40b6-b071-94560fc2efd4"
+subscription_id = "b2cab71b-eb34-4062-9a43-dc2d606ec98f"
+

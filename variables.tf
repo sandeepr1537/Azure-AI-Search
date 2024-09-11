@@ -13,10 +13,7 @@ variable "storage_account" {
   type        = string
 }
 
-variable "storage_container" {
-  description = "The name of the storage container"
-  type        = string
-}
+
 
 variable "search_service" {
   description = "The name of the Azure Search Service"

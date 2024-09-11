@@ -1,0 +1,27 @@
+ trigger:
+  - main
+
+ pool:
+  vmImage: 'ubuntu-latest'
+
+ variables:
+  resource_group: "my-rg01"
+  location: "Australia East"
+  storage_account: "mystoracc"
+  search_service: "mysearchsvc"
+  cognitive_account: "mycognitiveaccount"
+  sku: "S0"
+  storage_container: "mystorage_container"
+
+ jobs:
+  upload-files:
+  runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}

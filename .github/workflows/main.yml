@@ -1,33 +1,30 @@
-name: Terraform Deploy
-
-on:
-  push:
-    branches:
-      - main
+trigger:
+ - main
 
 jobs:
-  terraform:
-    runs-on: ubuntu-latest
+ - job: Terraform
+   pool:
+    vmImage: 'ubuntu-latest'
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+env:
+    ARM_CLIENT_ID: ${{ secrets.clientId }}
+    ARM_CLIENT_SECRET: ${{ secrets.clientSecret }}
+    ARM_SUBSCRIPTION_ID: ${{ secrets.subscriptionId }}
+    ARM_TENANT_ID: ${{ secrets.tenantId }}
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.6.0
+steps: 
+  - task: UseTerraform@0
+    inputs:
+      terraformVersion: '1.4.x'
 
-    - name: Terraform Init
-      run: terraform init
+  - script: |
+     terraform init
+     displayName: 'Initialize Terraform'
 
-    - name: Terraform Plan
-      run: terraform plan -out=tfplan
+  - script: |
+      terraform plan -var-file=terraform.tfvars
+    displayName: 'Terraform Plan'
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
-      env:
-        ARM_CLIENT_ID: ${{ secrets.clientId }}
-        ARM_CLIENT_SECRET: ${{ secrets.clientSecret }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.subscriptionId }}
-        ARM_TENANT_ID: ${{ secrets.tenantId }}
+  - script: |
+      terraform apply -var-file=terraform.tfvars -auto-approve
+  displayName: 'Terraform Apply'

@@ -14,13 +14,21 @@ variable "storage_account" {
   type        = string
 }
 
+
+variable "storage_container"
+  description = "The name of the storage container"
+  type        = string
+}
+
+
+
 variable "search_service" {
   description = "The name of the Azure Search Service"
   type        = string
 }
 
 variable "cognitive_account" {
-  description = "The name of the Azure Search Service"
+  description = "The name of the Azure cognitive account"
   type        = string
 }
 

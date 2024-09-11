@@ -1,12 +1,12 @@
-resource "azurerm_resource_group" "example" {
+resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group
   location = var.location
 }
 
 resource "azurerm_storage_account" "example" {
   name                     = var.storage_account
-  resource_group_name       = azurerm_resource_group.example.name
-  location                  = azurerm_resource_group.example.location
+  resource_group_name       = azurerm_resource_group.resource_group.name
+  location                  = azurerm_resource_group.resource_group.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
 
@@ -15,9 +15,19 @@ resource "azurerm_storage_account" "example" {
   }
 }
 
-resource "azurerm_search_service" "example" {
+resource "azurerm_search_service" "search_service" {
   name                = var.search_service
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = azurerm_resource_group.resource_group.location
   sku                 = "Basic"
+}
+
+
+
+resource "azurerm_cognitive_account" "cognitive_account" {
+  name                = var.Cognitive_Service
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  sku_name            = var.sku
+  kind                = "CognitiveServices"
 }

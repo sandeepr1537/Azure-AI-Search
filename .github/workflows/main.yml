@@ -1,0 +1,55 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  TF_VAR_search_service_name: 'myprojsearchservice01'
+  TF_VAR_storage_account_name: 'myprojstorageaccount01'
+  TF_VAR_cognitive_services_name: 'myproazureaIservices01'
+  ARM_CLIENT_ID: $(azureServicePrincipalId)
+  ARM_CLIENT_SECRET: $(azureServicePrincipalKey)
+  ARM_SUBSCRIPTION_ID: $(azureSubscriptionId)
+  ARM_TENANT_ID: $(azureTenantId)
+
+stages:
+  - stage: Terraform_Deployment
+    displayName: "Terraform Deployment"
+    jobs:
+      - job: Terraform_Init_Plan_Apply
+        displayName: "Terraform Init, Plan, and Apply"
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: '<Azure service connection name>'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Install Terraform
+                curl -o terraform.zip https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
+                unzip terraform.zip
+                sudo mv terraform /usr/local/bin/
+                terraform version
+
+                # Initialize Terraform
+                terraform init
+
+                # Plan Terraform
+                terraform plan -out=tfplan
+
+                # Apply Terraform
+                terraform apply -auto-approve tfplan
+        env:
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+
+      - task: PublishPipelineArtifact@1
+               inputs:
+               targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
+               artifactName: 'tfplan'
+               publishLocation: 'pipeline'

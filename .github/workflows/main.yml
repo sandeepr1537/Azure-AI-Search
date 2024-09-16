@@ -1,55 +1,43 @@
 trigger:
-  branches:
-    include:
-      - main
+- main  # Change this to the branch you want to trigger the pipeline
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  TF_VAR_search_service_name: 'myprojsearchservice01'
-  TF_VAR_storage_account_name: 'myprojstorageaccount01'
-  TF_VAR_cognitive_services_name: 'myproazureaIservices01'
-  ARM_CLIENT_ID: $(azureServicePrincipalId)
-  ARM_CLIENT_SECRET: $(azureServicePrincipalKey)
-  ARM_SUBSCRIPTION_ID: $(azureSubscriptionId)
-  ARM_TENANT_ID: $(azureTenantId)
+  azureSubscription: 'Your-Azure-Subscription'  # Change this to your Azure subscription service connection
+  resourceGroup: 'myproj_resource_group'
+  location: 'Australia East'
+  tfVersion: '1.5.0'  # Use the appropriate version of Terraform
 
-stages:
-  - stage: Terraform_Deployment
-    displayName: "Terraform Deployment"
-    jobs:
-      - job: Terraform_Init_Plan_Apply
-        displayName: "Terraform Init, Plan, and Apply"
-        steps:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: '<Azure service connection name>'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                # Install Terraform
-                curl -o terraform.zip https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
-                unzip terraform.zip
-                sudo mv terraform /usr/local/bin/
-                terraform version
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      # Install Terraform
+      curl -LO https://releases.hashicorp.com/terraform/$(tfVersion)/terraform_$(tfVersion)_linux_amd64.zip
+      unzip terraform_$(tfVersion)_linux_amd64.zip
+      sudo mv terraform /usr/local/bin/
+      terraform --version
 
-                # Initialize Terraform
-                terraform init
+- task: TerraformInstaller@0
+  inputs:
+    terraformVersion: $(tfVersion)
 
-                # Plan Terraform
-                terraform plan -out=tfplan
+- script: |
+    terraform init
+    terraform validate
+    terraform plan -out=tfplan
+  displayName: 'Terraform Init and Plan'
 
-                # Apply Terraform
-                terraform apply -auto-approve tfplan
-        env:
-              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-              ARM_TENANT_ID: $(ARM_TENANT_ID)
-
-      - task: PublishPipelineArtifact@1
-               inputs:
-               targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
-               artifactName: 'tfplan'
-               publishLocation: 'pipeline'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform apply -auto-approve tfplan
+  displayName: 'Terraform Apply'
